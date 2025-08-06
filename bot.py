@@ -1,10 +1,17 @@
 import discord
 import asyncio
+import os
+from dotenv import load_dotenv
 
-TOKEN = MTQwMjU2Mzg0NzU2NjM5MzQwNA.GjTsX_.E-9kqMq-o8_jxFHJ1g8TxZp1bal-Y4RLRKa-fA
-CHANNEL_ID = 1400757543021838357  # Sudah kamu dapat
+load_dotenv()
 
-pesan_list = [
+TOKEN = os.getenv("DISCORD_TOKEN")
+CHANNEL_ID = int(os.getenv("CHANNEL_ID"))
+
+intents = discord.Intents.default()
+client = discord.Client(intents=intents)
+
+messages = [
     "HALO GES SELAMAT GRINDING",
     "NGOPI NGOPI GES",
     "Yuk gaskan lah ah, walawe walawe",
@@ -12,21 +19,18 @@ pesan_list = [
     "KOWKWKOWOKKWKOWKOW"
 ]
 
-delay = 10  # detik
-
-intents = discord.Intents.default()
-client = discord.Client(intents=intents)
-
 @client.event
 async def on_ready():
-    print(f'Bot aktif sebagai {client.user}')
+    print(f"Logged in as {client.user}")
     channel = client.get_channel(CHANNEL_ID)
 
-    index = 0
+    if channel is None:
+        print("Channel tidak ditemukan. Cek ID-nya.")
+        return
+
     while True:
-        pesan = pesan_list[index]
-        await channel.send(pesan)
-        index = (index + 1) % len(pesan_list)
-        await asyncio.sleep(delay)
+        for message in messages:
+            await channel.send(message)
+            await asyncio.sleep(10)  # tiap 10 detik
 
 client.run(TOKEN)
